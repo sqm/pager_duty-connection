@@ -146,12 +146,17 @@ module PagerDuty
       end
     end
 
-    def initialize(token, debug: false)
+    def initialize(token, token_type: :Token, debug: false)
       @connection = Faraday.new do |conn|
         conn.url_prefix = "https://api.pagerduty.com/"
 
-        # use token authentication: http://developer.pagerduty.com/documentation/rest/authentication
-        conn.token_auth token
+        token_arg =
+          case token_type
+          when :Token then { token: token }
+          when :Bearer then token
+          else raise ArgumentError, "invalid token_type: #{token_type.inspect}"
+          end
+        conn.authorization(token_type, token_arg)
 
         conn.use RaiseApiErrorOnNon200
         conn.use RaiseFileNotFoundOn404
@@ -181,19 +186,19 @@ module PagerDuty
       offset = (page - 1) * limit
       request[:query_params] = request[:query_params].merge(offset: offset, limit: limit)
 
-      run_request(:get, path, request)
+      run_request(:get, path, **request)
     end
 
     def put(path, request = {})
-      run_request(:put, path, request)
+      run_request(:put, path, **request)
     end
 
     def post(path, request = {})
-      run_request(:post, path, request)
+      run_request(:post, path, **request)
     end
 
     def delete(path, request = {})
-      run_request(:delete, path, request)
+      run_request(:delete, path, **request)
     end
 
     private

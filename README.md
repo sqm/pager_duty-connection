@@ -25,7 +25,7 @@ And this is what it doesn't do:
 * have methods for individual API calls that are possible (ie `find_incident`, `list_users`, etc)
 * provide [will_paginate](https://github.com/mislav/will_paginate) or [kaminari](https://github.com/amatsuda/kaminari) paginated arrays (They aren't super documented for building a library that works well with them, and have different APIs)
 
-**Note**: v1 of the Pager Duty REST API is no longer supported with this gem. Please either upgrade to v2 of the API [(v2 Migration Documentation)](https://v2.developer.pagerduty.com/docs/migrating-to-api-v2) or do not upgrade past version 0.2.0 of this gem.
+**Note**: v1 of the Pager Duty REST API is no longer supported with this gem. Please either upgrade to v2 of the API [(v2 Migration Documentation)](https://v2.developer.pagerduty.com/docs/migrating-to-api-v2) or do not upgrade past version [0.2.0 of this gem](https://github.com/technicalpickles/pager_duty-connection/tree/v0.2.0).
 
 ## Installation
 
@@ -47,8 +47,11 @@ Or install it yourself as:
 Working code is worth a thousand words. The basics:
 
 ```ruby
-# setup the connection
-pagerduty = PagerDuty::Connection.new(token, version)
+# setup the connection with API token
+pagerduty = PagerDuty::Connection.new(token)
+
+# setup the connection with OAuth2 token
+pagerduty = PagerDuty::Connection.new(token, token_type: :Bearer)
 
 # 4 main methods: `get`, `post`, `put`, and `delete`:
 
@@ -96,7 +99,7 @@ In general, you can get/put/post/delete a path, with some attributes. Use the [R
 If you are working in Rails, and using only a single PagerDuty account, you'll probably want an initializer:
 
 ```ruby
-$pagerduty = PagerDuty::Connection.new('your-subdomain', 'your-token')
+$pagerduty = PagerDuty::Connection.new('your-token')
 ```
 
 And if you are using [dotenv](https://github.com/bkeepers/dotenv), you can use environment variables, and stash them in .env:
